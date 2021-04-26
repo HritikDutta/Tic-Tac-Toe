@@ -1,6 +1,7 @@
 #include "ttt.h"
 
 #include <cstring>
+#include <ctime>
 #include <string>
 #include "universal/types.h"
 #include "platform/application.h"
@@ -13,6 +14,7 @@ static struct
     std::string text;
     bool isPaused;
     bool isEndScreen;
+    bool inMainMenu;
 } pauseData;
 
 
@@ -31,7 +33,7 @@ void Game::Init(Application* app)
     sprites[0].Set({ cellSize, cellSize }, { 0.0f, 0.0f, 0.5f, 1.0f });
     sprites[1].Set({ cellSize, cellSize }, { 0.0f, 0.5f, 1.0f, 1.0f });
 
-    Reset();
+    pauseData.inMainMenu = true;
 }
 
 void Game::Reset()
@@ -70,8 +72,59 @@ void Game::SetPause(bool value)
         pauseData.isPaused = value;
 }
 
+void Game::Update()
+{
+    if (pauseData.isPaused)
+        return;
+
+    if (vsComputer && playerIndex == 1)
+        PlaceElementComp();
+}
+
 void Game::Render(Application* app)
 {
+    if (pauseData.inMainMenu)
+    {
+        {   // Title
+            std::string title = "Tic Tac Toe";
+            Vec2 size = UI::GetRenderedTextSize(title, font);
+            Vec2 position = { (app->refScreenWidth - size.x) / 2.0f, 10.0f };
+            UI::RenderText(app, title, font, { 1.0f, 1.0f, 1.0f, 1.0f }, position, 0.0f);
+        }
+
+        {   // Buttons
+            // Not necessary to have both players since Inconsolata
+            // is monospace but welp.
+            std::string btn1Text = "1 Player";
+            std::string btn2Text = "2 Player";
+
+            {   // 1 Player button
+                Vec2 size = UI::GetRenderedTextSize(btn1Text, font);
+                Vec2 position = { (app->refScreenWidth - size.x - 20.0f) / 2.0f, (app->refScreenHeight / 2.0f) - size.y - 15.0f };
+                if (UI::RenderTextButton(app, GenUIID(), btn1Text, font,
+                                         { 10.0f, 5.0f }, position, 0.0f))
+                {
+                    vsComputer = true;
+                    pauseData.inMainMenu = false;
+                    Reset();
+                }
+            }
+
+            {   // 2 Player button
+                Vec2 size = UI::GetRenderedTextSize(btn2Text, font);
+                Vec2 position = { (app->refScreenWidth - size.x - 20.0f) / 2.0f, (app->refScreenHeight / 2.0f) + size.y + 15.0f };
+                if (UI::RenderTextButton(app, GenUIID(), btn2Text, font,
+                                         { 10.0f, 5.0f }, position, 0.0f))
+                {
+                    vsComputer = false;
+                    pauseData.inMainMenu = false;
+                    Reset();
+                }
+            }
+        }
+        return;
+    }
+
     static const f32 boardSize = (f32) app->refScreenHeight - 100.0f;
     static const f32 cellSize  = boardSize / 3.0f;
 
@@ -83,7 +136,7 @@ void Game::Render(Application* app)
     {   // Title
         std::string title = "Tic Tac Toe";
         Vec2 size = UI::GetRenderedTextSize(title, font);
-        Vec2 position = { (app->refScreenWidth - boardSize) / 2.0f, 10.0 };
+        Vec2 position = { (app->refScreenWidth - boardSize) / 2.0f, 10.0f };
         UI::RenderText(app, title, font, { 1.0f, 1.0f, 1.0f, 1.0f },
                         position, 0.0f);
     }
@@ -111,9 +164,13 @@ void Game::Render(Application* app)
                 if (!pauseData.isPaused && board[i * 3 + j] == CellElement::EMPTY)
                 {
                     Vec4 color = colors[(int) board[i * 3 + j]];
-                    if (UI::RenderButton(app, GenUIIDWithSec(i + j), r,
-                                            color, playerColors[playerIndex], colors[playerIndex],
-                                            0.0f))
+                    if (vsComputer && playerIndex == 1)
+                    {
+                        UI::RenderRect(app, r, color, 0.0f);
+                    }
+                    else if (UI::RenderButton(app, GenUIIDWithSec(i + j), r,
+                                             color, playerColors[playerIndex], colors[playerIndex],
+                                             0.0f))
                     {
                         PlaceElement(i * 3 + j);
                     }
@@ -164,14 +221,32 @@ void Game::Render(Application* app)
         }
     }
 
-    {   // Reset Button
-        std::string resetText = "Reset";
-        Vec2 size = UI::GetRenderedTextSize(resetText, font);
-        Vec2 topLeft = { (app->refScreenWidth - (size.x + 20.0f)) / 2.0f, app->refScreenHeight - ((50.0f + size.y + 10.0f) / 2.0f) };
-        if (UI::RenderTextButton(app, GenUIID(), resetText, font,
-                                 { 10.0f, 5.0f }, topLeft, 0.0f))
-        {
-            Reset();
+    {   // Bottom
+
+        std::string resetBtnText = "Reset";
+        std::string menuBtnText = "Menu";
+
+        Vec2 resetBtnSize = UI::GetRenderedTextSize(resetBtnText, font) + Vec2 { 20.0f, 10.0f };
+        Vec2 menuBtnSize = UI::GetRenderedTextSize(menuBtnText, font) + Vec2 { 20.0f, 10.0f };
+
+        Vec2 totalSize { resetBtnSize.x + menuBtnSize.x + 10.0f, resetBtnSize.y };
+
+        {   // Reset button
+            Vec2 topLeft = { ((app->refScreenWidth - totalSize.x) / 2.0f), app->refScreenHeight - 50.0f + (resetBtnSize.y / 2.0f) };
+            if (UI::RenderTextButton(app, GenUIID(), resetBtnText, font,
+                                     { 10.0f, 5.0f }, topLeft, 0.0f))
+            {
+                Reset();
+            }
+        }
+
+        {   // Menu button
+            Vec2 topLeft = { ((app->refScreenWidth - totalSize.x) / 2.0f) + resetBtnSize.x + 10.0f, app->refScreenHeight - 50.0f + (menuBtnSize.y / 2.0f) };
+            if (UI::RenderTextButton(app, GenUIID(), menuBtnText, font,
+                                     { 10.0f, 5.0f }, topLeft, 0.0f))
+            {
+                pauseData.inMainMenu = true;
+            }
         }
     }
 
@@ -228,6 +303,24 @@ void Game::PlaceElement(int index)
 
         playerIndex = 1 - playerIndex;
     }
+}
+
+void Game::PlaceElementComp()
+{
+    // A random number is generated and
+    // for selecting the index, if the index isn't
+    // empty then the board linearly probed for the next index;
+
+    int startIndex = rand() % 9;
+    int index = startIndex;
+    while (board[index] != CellElement::EMPTY)
+    {
+        index = (index + 1) % 9;
+        if (index == startIndex)
+            break;
+    }
+
+    PlaceElement(index);
 }
 
 bool Game::IsDraw()

@@ -22,6 +22,7 @@ struct Game
     CellElement board[9];
     int playerScores[2];
     int playerIndex;
+    bool vsComputer;
 
     void Init(Application* app);
     void Reset();
@@ -32,7 +33,10 @@ struct Game
     bool IsDraw();
     bool PlayerWon();
 
+    void Update();
     void Render(Application* app);
     void DrawCell(Application* app, int i, int j);
+
     void PlaceElement(int index);
+    void PlaceElementComp();
 };

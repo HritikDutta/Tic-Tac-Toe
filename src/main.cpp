@@ -36,11 +36,7 @@ int main(int argc, const char* argv[])
         if (app->GetKeyDown(KEY(ESCAPE)))
             game.SetPause(!game.IsPaused());
 
-        if (app->GetKeyDown(KEY(Q)))
-            game.playerScores[0]++;
-
-        if (app->GetKeyDown(KEY(E)))
-            game.playerScores[1]++;
+        game.Update();
     };
 
     app.onRender = [](Application* app)
