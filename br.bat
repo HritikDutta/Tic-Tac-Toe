@@ -1,3 +1,3 @@
 @echo off
 
-cls && build && game -debug
+cls && build && ttt -debug

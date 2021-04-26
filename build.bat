@@ -17,6 +17,6 @@ cl /EHsc /c src/game/*.cpp %includes%
 
 cl /EHsc /c src/main.cpp %includes%
 
-link *.obj %libs% /OUT:game.exe /NODEFAULTLIB:LIBCMT
+link *.obj %libs% /OUT:ttt.exe /NODEFAULTLIB:LIBCMT
 
 del *.obj
