@@ -6,6 +6,7 @@ set libs=dependencies\GLFW\lib\glfw3.lib dependencies\Glad\lib\glad.lib Shell32.
 rem Libraries
 cl /Ox /EHsc /c dependencies\stb\src\*.cpp  /I dependencies\stb\include
 
+rem Source
 cl /MT /Ox /EHsc /c src/universal/vecs/*.cpp
 cl /MT /Ox /EHsc /c src/universal/mats/*.cpp
 cl /MT /Ox /EHsc /c src/universal/*.cpp
@@ -17,6 +18,11 @@ cl /MT /Ox /EHsc /c src/game/*.cpp %includes%
 
 cl /MT /Ox /EHsc /c src/main.cpp %includes%
 
-link *.obj %libs% /OUT:ttt.exe /NODEFAULTLIB:LIBCMT /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup
+rem Resources
+rc resources.rc
 
+link *.obj *.res %libs% /OUT:ttt.exe /NODEFAULTLIB:LIBCMT /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup
+
+rem Delete intermediate files
 del *.obj
+del *.res
