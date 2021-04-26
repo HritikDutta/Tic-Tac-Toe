@@ -193,10 +193,14 @@ void Game::Render(Application* app)
             }
 
             { // Continue Button
-                std::string continueText = "Press Esc To Continue";
-                Vec2 size = UI::GetRenderedTextSize(continueText, font);
-                Vec2 topLeft = rect.topLeft + Vec2 { (boardSize - size.x) / 2.0f , boardSize - (size.y + font.fontHeight) };
-                UI::RenderText(app, continueText, font, { 1.0f, 1.0f, 1.0f, 1.0f }, topLeft, -0.06);
+                std::string btnText = "Continue";
+                Vec2 size = UI::GetRenderedTextSize(btnText, font);
+                Vec2 topLeft = rect.topLeft + Vec2 { (boardSize - size.x - 20.0f) / 2.0f , boardSize - (size.y + 10.0f + font.fontHeight) };
+                if (UI::RenderTextButton(app, GenUIID(), btnText, font,
+                                         { 10.0f, 5.0f }, topLeft, -0.06f))
+                {
+                    SetPause(false);
+                }
             }
         }
     }

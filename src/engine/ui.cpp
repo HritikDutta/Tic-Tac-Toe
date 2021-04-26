@@ -208,10 +208,14 @@ bool RenderButton(Application* app, ID id, const Rect& rect, Vec4 defaultColor,
         if (data.hot != id)
             data.hot = id;
 
-        if (app->GetMouseButton(MOUSE(1)))
+        if (app->GetMouseButtonDown(MOUSE(1)))
         {
             result = data.active != id;
             data.active = id;
+        }
+
+        if (app->GetMouseButton(MOUSE(1)))
+        {
             color = pressedColor;
         }
         else
@@ -230,7 +234,6 @@ bool RenderButton(Application* app, ID id, const Rect& rect, Vec4 defaultColor,
 
     return result;
 }
-
 
 bool RenderTextButton(Application* app, ID id, const std::string& text, const Font& font,
                     Vec2 padding, Vec2 topLeft, f32 layer)
@@ -251,4 +254,5 @@ bool RenderTextButton(Application* app, ID id, const std::string& text, const Fo
 
     return res;
 }
+
 }
