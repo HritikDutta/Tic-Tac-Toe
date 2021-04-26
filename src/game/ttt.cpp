@@ -168,7 +168,7 @@ void Game::Render(Application* app)
                     {
                         UI::RenderRect(app, r, color, 0.0f);
                     }
-                    else if (UI::RenderButton(app, GenUIIDWithSec(i + j), r,
+                    else if (UI::RenderButton(app, GenUIIDWithSec(i * 3 + j), r,
                                              color, playerColors[playerIndex], colors[playerIndex],
                                              0.0f))
                     {
