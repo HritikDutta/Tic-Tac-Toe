@@ -50,6 +50,7 @@ Application::Application(const char title[], int width, int height, bool fullscr
 
     glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, (int) debug);
+    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
     GLFWmonitor* monitor = fullscreen ? glfwGetPrimaryMonitor() : NULL;
     window = glfwCreateWindow(width, height, title, monitor, NULL);
