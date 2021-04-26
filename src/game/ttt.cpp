@@ -349,24 +349,16 @@ bool Game::PlayerWon()
 
         // Diagonal
         { 0, 4, 8 },
-        { 2, 5, 6 },
+        { 2, 4, 6 },
     };
 
     CellElement currElem = (CellElement) playerIndex;
 
     for (int i = 0; i < 8; i++)
     {
-        bool complete = true;
-        for (int j = 0; j < 3; j++)
-        {
-            if (board[winLines[i][j]] != currElem)
-            {
-                complete = false;
-                break;
-            }
-        }
-
-        if (complete)
+        if (board[winLines[i][0]] == currElem &&
+            board[winLines[i][1]] == currElem &&
+            board[winLines[i][2]] == currElem)
             return true;
     }
 
