@@ -105,7 +105,7 @@ void RenderText(Application* app, const std::string& text, const Font& font,
     int indicesFilled  = 0;
 
     Vec2 position = topLeft;
-    position.y += font.fontHeight * 0.75f;
+    position.y += font.fontHeight * 0.7f;
 
     for (int i = 0; i < text.length(); i++)
     {
