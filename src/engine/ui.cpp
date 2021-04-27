@@ -214,7 +214,7 @@ bool RenderButton(Application* app, ID id, const Rect& rect, Vec4 defaultColor,
             data.active = id;
         }
 
-        if (data.active == id)
+        if (data.active == id && app->GetMouseButton(MOUSE(1)))
         {
             color = pressedColor;
         }
